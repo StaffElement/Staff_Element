@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(InputSystem))]
+[RequireComponent(typeof(GameplayInputController))]
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerMovement : MonoBehaviour
 {
@@ -16,12 +16,12 @@ public class PlayerMovement : MonoBehaviour
     private float jumpForce = 0f;
 
     private Rigidbody2D rb;
-    private InputSystem inputSystem;
+    private GameplayInputController inputSystem;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        inputSystem = GetComponent<InputSystem>();
+        inputSystem = GetComponent<GameplayInputController>();
 
         inputSystem.OnMoveButtonPressed += (inputAxis) => Moving(inputAxis);
         inputSystem.OnJumpButtonPressed += (inputAxis) => Jumping(inputAxis);
@@ -30,6 +30,7 @@ public class PlayerMovement : MonoBehaviour
     private void Moving(float inputAxis)
     {
         // TODO: Moving Implement Here
+        transform.position += new Vector3(inputAxis * moveSpeed * Time.deltaTime, 0, 0);
         OnMoving?.Invoke();
     }
 

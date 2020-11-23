@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InputSystem : MonoBehaviour
+public class GameplayInputController : MonoBehaviour
 {
     public event Action<float> OnMoveButtonPressed; 
     public event Action<float> OnJumpButtonPressed;
