@@ -9,6 +9,10 @@ public class PlayerMovement : MonoBehaviour
 {
     public event Action OnMoving;
     public event Action OnJumping;
+    public Transform feetpos;
+    public float checkRadius;
+    public LayerMask whatisground;
+   
 
     [SerializeField]
     private float moveSpeed = 0f;
@@ -17,6 +21,11 @@ public class PlayerMovement : MonoBehaviour
 
     private Rigidbody2D rb;
     private GameplayInputController inputSystem;
+    private bool isGround;
+    private float jumpTimeCounter;
+    public float jumpTime;
+    private bool isJumping;
+
 
     private void Awake()
     {
@@ -37,6 +46,34 @@ public class PlayerMovement : MonoBehaviour
     private void Jumping(float inputAxis)
     {
         // TODO: Jumping Implement Here
-        OnJumping?.Invoke();
+        isGround = Physics2D.OverlapCircle(feetpos.position, checkRadius, whatisground);
+        if (isGround==true && inputAxis == 1)
+        {
+            isJumping = true;
+            //limit player hold space time
+            jumpTimeCounter = jumpTime;
+            rb.velocity = Vector2.up * jumpForce;
+        }
+
+        if (inputAxis == 1 && isJumping==true)
+        {
+            //check jumpTimeCounter less 0 or larger 0
+            if (jumpTimeCounter > 0)
+            {
+                rb.velocity = Vector2.up * jumpForce;
+                jumpTimeCounter -= Time.deltaTime;
+            }
+            else
+            {
+                isJumping = false;
+            }
+        }
+
+        if(inputAxis == 0)
+        {
+            isJumping = false;
+        }
+
+        OnJumping?.Invoke(); 
     }
 }
