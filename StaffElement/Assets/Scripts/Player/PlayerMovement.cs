@@ -33,7 +33,7 @@ public class PlayerMovement : MonoBehaviour
         transform.position += new Vector3(inputAxis * moveSpeed * Time.deltaTime, 0, 0);
         OnMoving?.Invoke();
     }
-    //test
+ 
     private void Jumping(float inputAxis)
     {
         // TODO: Jumping Implement Here
