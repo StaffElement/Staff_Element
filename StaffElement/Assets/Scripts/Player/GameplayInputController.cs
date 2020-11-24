@@ -25,6 +25,6 @@ public class GameplayInputController : MonoBehaviour
         if (Input.GetAxis("Horizontal") != 0) OnMoveButtonPressed?.Invoke(Input.GetAxis("Horizontal"));
 
         // Jumping event:
-        if (Input.GetAxis("Jump") != 0) OnJumpButtonPressed?.Invoke(Input.GetAxis("Horizontal"));
+        if (Input.GetAxis("Jump") != 0) OnJumpButtonPressed?.Invoke(Input.GetAxis("Jump"));
     }
 }
