@@ -16,18 +16,14 @@ public class PlayerMovement : MonoBehaviour
     private float jumpForce = 0f;
     [SerializeField]
     public float jumpTime = 0f;
-    [SerializeField]
-    private float checkRadius = 0f;
-    [SerializeField]
-    private Transform feetPosition;
-    [SerializeField]
-    private LayerMask whatisground;
-
+ 
     private Rigidbody2D rb;
     private GameplayInputController inputSystem;
     private bool isGround;
     private float jumpTimeCounter;
     private bool isJumping;
+
+    public bool IsGround { get => isGround; set => isGround = value; }
 
     private void Awake()
     {
@@ -35,7 +31,8 @@ public class PlayerMovement : MonoBehaviour
         inputSystem = GetComponent<GameplayInputController>();
 
         inputSystem.OnMoveButtonPressed += (inputAxis) => Moving(inputAxis);
-        inputSystem.OnJumpButtonPressed += (inputAxis) => Jumping(inputAxis);
+        inputSystem.OnJumpButtonReleased += JumpingKeyUp;
+        inputSystem.OnJumpButtonPressed += JumpingKeyOn;
     }
 
     private void Moving(float inputAxis)
@@ -45,16 +42,15 @@ public class PlayerMovement : MonoBehaviour
         OnMoving?.Invoke();
     }
 
-    private void OnDrawGizmos()
+    private void JumpingKeyUp()
     {
-        Gizmos.DrawSphere(feetPosition.position, checkRadius);
+        isJumping = false;
     }
 
-    private void Jumping(float inputAxis)
+    private void JumpingKeyOn()
     {
         // TODO: Jumping Implement Here
-        isGround = Physics2D.OverlapCircle(feetPosition.position, checkRadius, whatisground);
-        if (isGround && inputAxis >= 0)
+        if (IsGround )
         {
             isJumping = true;
             //limit player hold space time
@@ -62,7 +58,7 @@ public class PlayerMovement : MonoBehaviour
             rb.velocity = Vector2.up * jumpForce;
         }
 
-        if (inputAxis == 1 && isJumping)
+        if (isJumping)
         {
             //check jumpTimeCounter less 0 or larger 0
             if (jumpTimeCounter > 0)
@@ -75,12 +71,6 @@ public class PlayerMovement : MonoBehaviour
                 isJumping = false;
             }
         }
-
-        if (inputAxis == 0)
-        {
-            isJumping = false;
-        }
-
         OnJumping?.Invoke(); 
     }
 }
