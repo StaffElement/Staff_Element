@@ -14,9 +14,20 @@ public class PlayerMovement : MonoBehaviour
     private float moveSpeed = 0f;
     [SerializeField]
     private float jumpForce = 0f;
+    [SerializeField]
+    public float jumpTime = 0f;
+    [SerializeField]
+    private float checkRadius = 0f;
+    [SerializeField]
+    private Transform feetPosition;
+    [SerializeField]
+    private LayerMask whatisground;
 
     private Rigidbody2D rb;
     private GameplayInputController inputSystem;
+    private bool isGround;
+    private float jumpTimeCounter;
+    private bool isJumping;
 
     private void Awake()
     {
@@ -33,10 +44,43 @@ public class PlayerMovement : MonoBehaviour
         transform.position += new Vector3(inputAxis * moveSpeed * Time.deltaTime, 0, 0);
         OnMoving?.Invoke();
     }
- 
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawSphere(feetPosition.position, checkRadius);
+    }
+
     private void Jumping(float inputAxis)
     {
         // TODO: Jumping Implement Here
-        OnJumping?.Invoke();
+        isGround = Physics2D.OverlapCircle(feetPosition.position, checkRadius, whatisground);
+        if (isGround && inputAxis >= 0)
+        {
+            isJumping = true;
+            //limit player hold space time
+            jumpTimeCounter = jumpTime;
+            rb.velocity = Vector2.up * jumpForce;
+        }
+
+        if (inputAxis == 1 && isJumping)
+        {
+            //check jumpTimeCounter less 0 or larger 0
+            if (jumpTimeCounter > 0)
+            {
+                rb.velocity = Vector2.up * jumpForce;
+                jumpTimeCounter -= Time.deltaTime;
+            }
+            else
+            {
+                isJumping = false;
+            }
+        }
+
+        if (inputAxis == 0)
+        {
+            isJumping = false;
+        }
+
+        OnJumping?.Invoke(); 
     }
 }
