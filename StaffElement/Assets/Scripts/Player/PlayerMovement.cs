@@ -7,9 +7,6 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerMovement : MonoBehaviour
 {
-    public event Action OnMoving;
-    public event Action OnJumping;
-
     [SerializeField]
     private float moveSpeed = 0f;
     [SerializeField]
@@ -18,28 +15,36 @@ public class PlayerMovement : MonoBehaviour
     public float jumpTime = 0f;
  
     private Rigidbody2D rb;
-    private GameplayInputController inputSystem;
+    private GameplayInputController gameplayInput;
     private bool isGround;
     private float jumpTimeCounter;
+    private bool isMoving;
     private bool isJumping;
 
     public bool IsGround { get => isGround; set => isGround = value; }
+    public bool IsMoving { get => isMoving; set => isMoving = value; }
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        inputSystem = GetComponent<GameplayInputController>();
+        gameplayInput = GetComponent<GameplayInputController>();
 
-        inputSystem.OnMoveButtonPressed += (inputAxis) => Moving(inputAxis);
-        inputSystem.OnJumpButtonReleased += JumpingKeyUp;
-        inputSystem.OnJumpButtonPressed += JumpingKeyOn;
+        gameplayInput.OnMoveButtonPressed += (inputAxis) => Moving(inputAxis);
+        gameplayInput.OnJumpButtonPressed += JumpingKeyOn;
+        gameplayInput.OnJumpButtonReleased += JumpingKeyUp;
     }
 
     private void Moving(float inputAxis)
     {
         // TODO: Moving Implement Here
         transform.position += new Vector3(inputAxis * moveSpeed * Time.deltaTime, 0, 0);
-        OnMoving?.Invoke();
+
+        if (inputAxis > 0)
+            transform.eulerAngles = new Vector3(0f, 0f, 0f);
+        else
+            transform.eulerAngles = new Vector3(0f, 180f, 0f);
+
+        isMoving = true;
     }
 
     private void JumpingKeyUp()
@@ -70,7 +75,6 @@ public class PlayerMovement : MonoBehaviour
             {
                 isJumping = false;
             }
-        }
-        OnJumping?.Invoke(); 
+        } 
     }
 }
